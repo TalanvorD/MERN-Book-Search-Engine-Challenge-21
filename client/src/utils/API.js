@@ -1,3 +1,4 @@
+/* We shouldn't need these anymore after migrating from a RESTful API
 // route to get logged in user's info (needs the token)
 export const getMe = (token) => {
   return fetch('/api/users/me', {
@@ -8,7 +9,7 @@ export const getMe = (token) => {
   });
 };
 
-export const createUser = (userData) => {
+export const checkingaddUser = (userData) => {
   return fetch('/api/users', {
     method: 'POST',
     headers: {
@@ -41,14 +42,14 @@ export const saveBook = (bookData, token) => {
 };
 
 // remove saved book data for a logged in user
-export const deleteBook = (bookId, token) => {
+export const removeBook = (bookId, token) => {
   return fetch(`/api/users/books/${bookId}`, {
     method: 'DELETE',
     headers: {
       authorization: `Bearer ${token}`,
     },
   });
-};
+}; */
 
 // make a search to google books api
 // https://www.googleapis.com/books/v1/volumes?q=harry+potter

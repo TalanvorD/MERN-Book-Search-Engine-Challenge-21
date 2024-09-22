@@ -1,27 +1,28 @@
 import './App.css';
+import { ApolloClient, InMemoryCache, ApolloProvider, createHttpLink } from "@apollo/client"; // Apollo client imports
+import { setContext } from "@apollo/client/link/context"; // Context import
 import { Outlet } from 'react-router-dom';
-import { ApolloClient, InMemoryCache, ApolloProvider, createHttpLink, } from '@apollo/client'; // Apollo imports
-import { setContext } from '@apollo/client/link/context';
 
 import Navbar from './components/Navbar';
 
-const client = new ApolloClient({ // Defines the client to use authmiddleware to run before making requests to GraphQL
-  uri: '/graphql',
-  cache: new InMemoryCache(),
-});
+const httpLink = createHttpLink({ uri: "/graphql" }); // GraphQL connection
 
-const httpLink = createHttpLink({ uri: '/graphql' }); // Uses createHttpLink to create our connection to graphql
+const authLink = setContext((_, { headers }) => {
+  const token = localStorage.getItem("id_token"); // Looks for a token in localStorage and sets it to a local variable
 
-const authLink = setContext((_, { headers }) => { // Handles the authorization via the JSON web token
-  const token = localStorage.getItem('id_token'); // Gets the token if it exists in localStorage
   return {
-    headers: { ...headers, authorization: token ? `Bearer ${token}` : '' }, //Returns the headers extracted from the token
-  };
+    headers: { ...headers, authorization: token ? `Bearer ${token}` : '' }
+  }
 });
+
+const client = new ApolloClient({ // Creates the Apollo client with appropriate link and cache
+  link: authLink.concat(httpLink),
+  cache: new InMemoryCache()
+})
 
 function App() {
   return (
-    <ApolloProvider client={client}> // React wrapper for Apollo
+    <ApolloProvider client={client}> {/* Apollo wrapper for React*/}
       <Navbar />
       <Outlet />
     </ApolloProvider>
